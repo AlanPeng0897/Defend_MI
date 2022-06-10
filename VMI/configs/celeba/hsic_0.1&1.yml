@@ -1,0 +1,11 @@
+data:
+  aux: celeba-aux
+  name: celeba
+  target: celeba-target
+evaluation_cls:
+  class: FinetunednsightFaceClassifier
+  name: Finetuned
+  path: pretrained/eval_clf/celeba/ckpt_e14.pt
+target_cls:
+  name: ResNet34
+  path: clf_results/celeba/hsic_0.1&1/best_ckpt.pt

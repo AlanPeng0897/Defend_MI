@@ -1,0 +1,17 @@
+{
+    "dataset":{
+      "name":"mnist",
+      "train_file_path":"../attack_dataset/MNIST/ganset.txt",
+      "img_path": "../attack_dataset/MNIST/Img",
+      "model_name":"mnist_gan",
+      "n_classes":5,
+      "gpus":"1"
+    },
+    "mnist_gan":{
+        "lr": 4e-3,
+        "batch_size": 64,
+        "z_dim": 100,
+        "epochs": 300,
+        "n_critic": 5
+    }
+}

@@ -1,0 +1,12 @@
+{
+    "augment": "",
+    "batch_size": 64,
+    "ckpt_every": 1,
+    "crop": 0,
+    "decoder_layers": 3,
+    "epochs": 14,
+    "jobid": -1,
+    "lr": 0.01,
+    "output_dir": "./FT_insight_face/nocrop",
+    "ttlr": 1
+}

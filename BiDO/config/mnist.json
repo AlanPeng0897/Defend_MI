@@ -1,0 +1,47 @@
+{
+  "dataset": {
+    "name": "mnist",
+    "train_file": "../attack_dataset/MNIST/trainset.txt",
+    "test_file": "../attack_dataset/MNIST/testset.txt",
+    "img_path": "../attack_dataset/MNIST/Img",
+    "model_name": "MCNN",
+    "n_classes": 5,
+    "device": "cuda",
+    "num_workers": 2
+  },
+    "SCNN": {
+    "epochs": 30,
+    "batch_size": 64,
+    "lr": 1e-2,
+    "momentum": 0.5,
+    "weight_decay": 0,
+    "gamma": 0.2,
+    "adjust_epochs": [
+      25
+    ]},
+  "MCNN": {
+    "epochs": 20,
+    "batch_size": 64,
+    "lr": 1e-1,
+    "momentum": 0.5,
+    "weight_decay": 0,
+    "gamma": 0.2,
+    "adjust_epochs": [
+      20,
+      35
+    ]},
+    "LeNet": {
+      "epochs": 20,
+      "batch_size": 64,
+      "lr": 0.01,
+      "momentum": 0.5,
+      "weight_decay": 0,
+      "gamma": 0.2,
+      "adjust_epochs": [
+        20,
+        35
+      ]
+    }
+}
+
+

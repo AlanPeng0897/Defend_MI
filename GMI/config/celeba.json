@@ -1,0 +1,26 @@
+{
+  "dataset":{
+    "name":"celeba",
+    "train_file_path":"/home/ubuntu/peng/code/MID/attack_dataset/CelebA/ganset.txt",
+    "model_name":"GAN",
+    "n_classes":1000,
+    "gpus":"3"
+  },
+  "GAN":{
+    "epochs":300,
+    "z_dim":100,
+    "batch_size":64,
+    "n_critic":5,
+    "lr":2e-4
+  },
+
+  "INV":{
+    "attack_name":"VGG16",
+    "attack_path":"",
+    "iter_times":3000,
+    "momentum":0.9,
+    "lambda":100,
+    "lr":1e-2
+  }
+}
+

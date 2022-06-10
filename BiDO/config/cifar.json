@@ -1,0 +1,19 @@
+{
+  "dataset": {
+    "name": "cifar",
+    "train_file": "../attack_dataset/CIFAR_/trainset.txt",
+    "test_file": "../attack_dataset/CIFAR/testset.txt",
+    "img_path": "../attack_dataset/CIFAR/",
+    "model_name": "VGG16",
+    "n_classes": 5,
+    "num_workers": 2
+  },
+  "VGG16": {
+    "batch_size": 64,
+    "epochs": 30,
+    "lr": 1e-4,
+    "adjust_epochs": [
+      25
+    ]
+  }
+}

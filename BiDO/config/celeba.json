@@ -1,0 +1,105 @@
+{
+  "dataset": {
+    "name": "celeba",
+    "train_file": "../attack_dataset/CelebA/trainset.txt",
+    "test_file": "../attack_dataset/CelebA/testset.txt",
+    "img_path": "../attack_dataset/CelebA/Img/",
+    "model_name": "VGG16",
+    "n_classes": 1000,
+    "instance": 4,
+    "Enhance": "Finetune",
+    "reg": "reg",
+    "num_workers": 4,
+    "device": "cuda"
+  },
+  "VGG16": {
+    "epochs": 50,
+    "batch_size": 64,
+    "lr": 1e-4,
+    "adjust_epochs": [
+      60
+    ],
+    "momentum": 0.9,
+    "weight_decay": 1e-4,
+    "gamma": 0.1
+  },
+  "Finetune": {
+    "epochs": 50,
+    "batch_size": 64,
+    "lr": 1e-4,
+    "adjust_epochs": [
+      45,
+      55
+    ]
+  },
+  "reg": {
+    "epochs": 50,
+    "batch_size": 64,
+    "lr": 1e-2,
+    "adjust_epochs": [
+      35
+    ],
+    "momentum": 0.9,
+    "weight_decay": 1e-4,
+    "gamma": 0.1
+  },
+  "VGG16_vib": {
+    "epochs": 50,
+    "batch_size": 64,
+    "instance": 4,
+    "lr": 1e-2,
+    "momentum": 0.9,
+    "weight_decay": 1e-4,
+    "gamma": 0.2,
+    "adjust_epochs": [
+      20,
+      35
+    ]
+  },
+  "IR50": {
+    "epochs": 70,
+    "batch_size": 64,
+    "instance": 4,
+    "lr": 1e-2,
+    "momentum": 0.9,
+    "weight_decay": 1e-4,
+    "adjust_epochs": [
+      60
+    ]
+  },
+  "FaceNet": {
+    "epochs": 30,
+    "batch_size": 64,
+    "instance": 4,
+    "lr": 1e-2,
+    "momentum": 0.9,
+    "weight_decay": 1e-4,
+    "adjust_lr": [
+      1e-3,
+      1e-4
+    ],
+    "adjust_epochs": [
+      15,
+      25
+    ]
+  },
+  "FaceNet64": {
+    "epochs": 50,
+    "batch_size": 64,
+    "learning_rate": 1e-2,
+    "momentum": 0.9,
+    "weight_decay": 1e-4,
+    "lrdecay_epoch": 10,
+    "lrdecay": 0.1
+  },
+  "IR152": {
+    "epochs": 40,
+    "batch_size": 64,
+    "learning_rate": 1e-2,
+    "momentum": 0.9,
+    "weight_decay": 1e-4,
+    "lrdecay_epoch": 10,
+    "lrdecay": 0.1
+  }
+}
+
