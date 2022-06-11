@@ -122,8 +122,6 @@ def get_in_channels(data_code):
     in_ch = -1
     if data_code == 'mnist':
         in_ch = 1
-    elif data_code == 'cifar10':
-        in_ch = 3
     elif data_code == 'fmnist':
         in_ch = 1
     else:
