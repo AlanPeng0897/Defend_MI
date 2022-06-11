@@ -33,40 +33,6 @@ class MinibatchDiscrimination(nn.Module):
         return x
 
 
-class MinibatchDiscriminator_CIFAR(nn.Module):
-    def __init__(self, in_dim=3, dim=64, n_classes=5):
-        super(MinibatchDiscriminator_CIFAR, self).__init__()
-        self.n_classes = n_classes
-
-        def conv_ln_lrelu(in_dim, out_dim, k, s, p):
-            return nn.Sequential(
-                nn.Conv2d(in_dim, out_dim, k, s, p),
-                # Since there is no effective implementation of LayerNorm,
-                # we use InstanceNorm2d instead of LayerNorm here.
-                nn.InstanceNorm2d(out_dim, affine=True),
-                nn.LeakyReLU(0.2))
-
-        self.layer1 = conv_ln_lrelu(in_dim, dim, 5, 2, 2)
-        self.layer2 = conv_ln_lrelu(dim, dim * 2, 5, 2, 2)
-        self.layer3 = conv_ln_lrelu(dim * 2, dim * 4, 5, 2, 2)
-        self.mbd1 = MinibatchDiscrimination(4096, 64, 50)
-        self.fc_layer = nn.Linear(4096 + 64, self.n_classes)
-
-    def forward(self, x):
-        out = []
-        bs = x.shape[0]
-        feat1 = self.layer1(x)
-        feat2 = self.layer2(feat1)
-        feat3 = self.layer3(feat2)
-        feat = feat3.view(bs, -1)
-        # print('feat:', feat.shape)
-        mb_out = self.mbd1(feat)  # Nx(A+B)
-        y = self.fc_layer(mb_out)
-
-        return feat, y
-        # return mb_out, y
-
-
 class MinibatchDiscriminator(nn.Module):
     def __init__(self, in_dim=3, dim=64, n_classes=1000):
         super(MinibatchDiscriminator, self).__init__()
@@ -97,40 +63,6 @@ class MinibatchDiscriminator(nn.Module):
         mb_out = self.mbd1(feat)  # Nx(A+B)
         y = self.fc_layer(mb_out)
 
-        return feat, y
-
-
-class MinibatchDiscriminator_ChestX(nn.Module):
-    def __init__(self, in_dim=1, dim=64, n_classes=8):
-        super(MinibatchDiscriminator_ChestX, self).__init__()
-        self.n_classes = n_classes
-
-        def conv_ln_lrelu(in_dim, out_dim, k, s, p):
-            return nn.Sequential(
-                nn.Conv2d(in_dim, out_dim, k, s, p),
-                nn.InstanceNorm2d(out_dim, affine=True),
-                nn.LeakyReLU(0.2))
-
-        self.layer1 = conv_ln_lrelu(in_dim, dim, 5, 2, 2)
-        self.layer2 = conv_ln_lrelu(dim, dim * 2, 5, 2, 2)
-        self.layer3 = conv_ln_lrelu(dim * 2, dim * 4, 5, 2, 2)
-        self.layer4 = conv_ln_lrelu(dim * 4, dim * 8, 5, 2, 2)
-        self.layer5 = conv_ln_lrelu(dim * 8, dim * 4, 5, 2, 2)
-        # self.layer6 = conv_ln_lrelu(dim * 8, dim * 4, 3, 2, 1)
-        self.mbd1 = MinibatchDiscrimination(dim * 4 * 4 * 4, 64, 50)
-        self.fc_layer = nn.Linear(dim * 4 * 4 * 4 + 64, self.n_classes)
-
-    def forward(self, x):
-        bs = x.shape[0]
-        feat1 = self.layer1(x)
-        feat2 = self.layer2(feat1)
-        feat3 = self.layer3(feat2)
-        feat4 = self.layer4(feat3)
-        feat5 = self.layer5(feat4)
-        # feat6 = self.layer6(feat4)
-        feat = feat5.view(bs, -1)
-        mb_out = self.mbd1(feat)  # Nx(A+B)
-        y = self.fc_layer(mb_out)
         return feat, y
 
 
