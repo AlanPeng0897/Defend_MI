@@ -19,18 +19,7 @@ def main(args, loaded_args, trainloader, testloader):
     lr = loaded_args[model_name]["lr"]
     milestones = loaded_args[model_name]["adjust_epochs"]
 
-    if args.dataset == 'cxr':
-        n_epochs = 50
-        if model_name == 'ResNet':
-            # net = model.ResNetCls(nc=1, zdim=128, imagesize=64, nclass=n_classes, resnetl=34, dropout=0).to(device)
-            # net = model.ResNetClsH(nc=1, zdim=512, imagesize=256, nclass=n_classes, resnetl=34, dropout=0.5)
-            net = model.PretrainedResNet(nc=1, nclass=7, imagesize=64)
-        elif model_name == 'VGG16':
-            net = model.VGG16_CXR(num_classes=n_classes)
-        elif model_name == 'VGG19':
-            net = model.VGG19_CXR(num_classes=n_classes)
-
-    elif args.dataset == 'mnist':
+    if args.dataset == 'mnist':
         if model_name == "MCNN":
             net = model.MCNN(n_classes)
         elif model_name == "SCNN":
@@ -117,3 +106,4 @@ if __name__ == '__main__':
     testloader = utils.init_dataloader(loaded_args, test_file, mode="test")
 
     main(args, loaded_args, trainloader, testloader)
+
