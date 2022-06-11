@@ -137,14 +137,8 @@ def get_activations(dataset, files, model, batch_size=50, dims=2048,
     if dataset == 'mnist':
         dims = 512
 
-    if dataset == 'cifar':
-        dims = 512
-
     if dataset == 'celeba':
         dims = 512
-
-    if dataset == 'cxr':
-        dims = 2048
 
     pred_arr = np.empty((len(files), dims))
 
@@ -283,8 +277,6 @@ def calculate_fid_given_paths(dataset, paths, batch_size, cuda, dims):
             raise RuntimeError('Invalid path: %s' % p)
 
     if dataset == 'celeba':
-        # block_idx = InceptionV3.BLOCK_INDEX_BY_DIM[dims]
-        # model = InceptionV3([block_idx])
         model = FaceNet(1000)
         model = torch.nn.DataParallel(model).cuda()
         path_E = './eval_ckp/FaceNet_95.88.tar'
@@ -298,21 +290,6 @@ def calculate_fid_given_paths(dataset, paths, batch_size, cuda, dims):
         ckp_E = torch.load(path_E)
         model = torch.nn.DataParallel(model).to('cuda')
         model.load_state_dict(ckp_E['state_dict'])
-
-    elif dataset == 'cifar':
-        model = VGG19(10)
-
-        path_E = './eval_ckp/VGG19_93.37.tar'
-        ckp_E = torch.load(path_E)
-        model = torch.nn.DataParallel(model).to('cuda')
-        model.load_state_dict(ckp_E['state_dict'])
-
-    elif dataset == 'cxr':
-        model = VGG19_CXR(7)
-        path_E = './eval_ckp/cxr_VGG19_eval_45.06.tar'
-        ckp_E = torch.load(path_E)
-        model = torch.nn.DataParallel(model).to('cuda')
-        model.load_state_dict(ckp_E['state_dict'], strict=False)
 
     if cuda:
         model.cuda()
