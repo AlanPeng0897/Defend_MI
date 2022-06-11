@@ -42,12 +42,18 @@ from scipy import linalg
 from torch.nn.functional import adaptive_avg_pool2d
 
 from PIL import Image
+import sys
+
+sys.path.append('../BiDO/')
+from model import SCNN, VGG19
+import evolve, utils
 
 try:
     from tqdm import tqdm
 except ImportError:
     # If not tqdm is not available, provide a mock version of it
-    def tqdm(x): return x
+    def tqdm(x):
+        return x
 
 from inception import InceptionV3
 
@@ -63,16 +69,44 @@ parser.add_argument('--dims', type=int, default=2048,
                           'By default, uses pool3 features'))
 parser.add_argument('-c', '--gpu', default='', type=str,
                     help='GPU to use (leave blank for CPU only)')
+parser.add_argument('--dataset', default='celeba', type=str,
+                    help='celeba | mnist')
 
 
-def imread(filename):
+class FaceNet(torch.nn.Module):
+    def __init__(self, num_classes=1000):
+        super(FaceNet, self).__init__()
+        self.feature = evolve.IR_50_112((112, 112))
+        self.feat_dim = 512
+        self.num_classes = num_classes
+        self.fc_layer = torch.nn.Linear(self.feat_dim, self.num_classes)
+
+    def predict(self, x):
+        feat = self.feature(x)
+        feat = feat.view(feat.size(0), -1)
+        out = self.fc_layer(feat)
+        return out
+
+    def forward(self, x):
+        x = utils.low2high(x)
+        feat = self.feature(x)
+        feat = feat.view(feat.size(0), -1)
+        out = self.fc_layer(feat)
+        return feat, out
+
+
+def imread(dataset, filename):
     """
     Loads an image file into a (height, width, 3) uint8 ndarray.
     """
-    return np.asarray(Image.open(filename), dtype=np.uint8)[..., :3]
+    if dataset == 'celeba':
+        return np.asarray(Image.open(filename), dtype=np.uint8)[..., :3]
+    elif dataset == 'mnist':
+        tmp = np.asarray(Image.open(filename), dtype=np.uint8)[..., :1]
+        return tmp
 
 
-def get_activations(files, model, batch_size=50, dims=2048,
+def get_activations(dataset, files, model, batch_size=50, dims=2048,
                     cuda=False, verbose=False):
     """Calculates the activations of the pool_3 layer for all images.
 
@@ -100,16 +134,25 @@ def get_activations(files, model, batch_size=50, dims=2048,
                'Setting batch size to data size'))
         batch_size = len(files)
 
+    elif dataset == 'mnist':
+        dims = 512
+
+    elif dataset == 'celeba':
+        dims = 512
+
+    else:
+        dims = 2048
+
     pred_arr = np.empty((len(files), dims))
 
     for i in tqdm(range(0, len(files), batch_size)):
         if verbose:
-            print('\rPropagating batch %d/%d' % (i + 1, n_batches),
+            print('\rPropagating batch %d/%d' % (i + 1, batch_size),
                   end='', flush=True)
         start = i
         end = i + batch_size
 
-        images = np.array([imread(str(f)).astype(np.float32)
+        images = np.array([imread(dataset, str(f)).astype(np.float32)
                            for f in files[start:end]])
 
         # Reshape to (n_images, 3, height, width)
@@ -121,17 +164,16 @@ def get_activations(files, model, batch_size=50, dims=2048,
             batch = batch.cuda()
 
         pred = model(batch)[0]
-
         # If model output is not scalar, apply global spatial average pooling.
         # This happens if you choose a dimensionality not equal 2048.
-        if pred.size(2) != 1 or pred.size(3) != 1:
-            pred = adaptive_avg_pool2d(pred, output_size=(1, 1))
+        # if dataset == 'celeba':
+        #     if pred.size(2) != 1 or pred.size(3) != 1:
+        #         pred = adaptive_avg_pool2d(pred, output_size=(1, 1))
 
         pred_arr[start:end] = pred.cpu().data.numpy().reshape(pred.size(0), -1)
 
     if verbose:
         print(' done')
-
     return pred_arr
 
 
@@ -192,7 +234,7 @@ def calculate_frechet_distance(mu1, sigma1, mu2, sigma2, eps=1e-6):
             np.trace(sigma2) - 2 * tr_covmean)
 
 
-def calculate_activation_statistics(files, model, batch_size=50,
+def calculate_activation_statistics(dataset, files, model, batch_size=50,
                                     dims=2048, cuda=False, verbose=False):
     """Calculation of the statistics used by the FID.
     Params:
@@ -211,13 +253,13 @@ def calculate_activation_statistics(files, model, batch_size=50,
     -- sigma : The covariance matrix of the activations of the pool_3 layer of
                the inception model.
     """
-    act = get_activations(files, model, batch_size, dims, cuda, verbose)
+    act = get_activations(dataset, files, model, batch_size, dims, cuda, verbose)
     mu = np.mean(act, axis=0)
     sigma = np.cov(act, rowvar=False)
     return mu, sigma
 
 
-def _compute_statistics_of_path(path, model, batch_size, dims, cuda):
+def _compute_statistics_of_path(dataset, path, model, batch_size, dims, cuda):
     if path.endswith('.npz'):
         f = np.load(path)
         m, s = f['mu'][:], f['sigma'][:]
@@ -225,27 +267,44 @@ def _compute_statistics_of_path(path, model, batch_size, dims, cuda):
     else:
         path = pathlib.Path(path)
         files = list(path.glob('*.jpg')) + list(path.glob('*.png'))
-        m, s = calculate_activation_statistics(files, model, batch_size,
+        m, s = calculate_activation_statistics(dataset, files, model, batch_size,
                                                dims, cuda)
 
     return m, s
 
 
-def calculate_fid_given_paths0(paths, batch_size, cuda, dims):
+def calculate_fid_given_paths(dataset, paths, batch_size=50, cuda=1, dims=2048):
     """Calculates the FID of two paths"""
     for p in paths:
         if not os.path.exists(p):
             raise RuntimeError('Invalid path: %s' % p)
 
-    block_idx = InceptionV3.BLOCK_INDEX_BY_DIM[dims]
+    if dataset == 'celeba':
 
-    model = InceptionV3([block_idx])
+        model = FaceNet(1000)
+        model = torch.nn.DataParallel(model).cuda()
+        path_E = './eval_ckp/FaceNet_95.88.tar'
+        ckp_E = torch.load(path_E)
+        model.load_state_dict(ckp_E['state_dict'], strict=False)
+
+    elif dataset == 'mnist':
+        model = SCNN(10)
+
+        path_E = './eval_ckp/SCNN_99.42.tar'
+        ckp_E = torch.load(path_E)
+        model = torch.nn.DataParallel(model).to('cuda')
+        model.load_state_dict(ckp_E['state_dict'])
+
+    else:
+        block_idx = InceptionV3.BLOCK_INDEX_BY_DIM[dims]
+        model = InceptionV3([block_idx])
+
     if cuda:
         model.cuda()
 
-    m1, s1 = _compute_statistics_of_path(paths[0], model, batch_size,
+    m1, s1 = _compute_statistics_of_path(dataset, paths[0], model, batch_size,
                                          dims, cuda)
-    m2, s2 = _compute_statistics_of_path(paths[1], model, batch_size,
+    m2, s2 = _compute_statistics_of_path(dataset, paths[1], model, batch_size,
                                          dims, cuda)
     fid_value = calculate_frechet_distance(m1, s1, m2, s2)
 
@@ -254,10 +313,11 @@ def calculate_fid_given_paths0(paths, batch_size, cuda, dims):
 
 if __name__ == '__main__':
     args = parser.parse_args()
-    #os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu
+    # os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu
 
-    fid_value = calculate_fid_given_paths0(args.path,
+    fid_value = calculate_fid_given_paths(args.dataset,
+                                          args.path,
                                           args.batch_size,
-                                          1,
+                                          args.gpu != '',
                                           args.dims)
     print('FID: ', fid_value)
