@@ -100,7 +100,6 @@ def main(args, loaded_args, trainloader, testloader):
             scheduler.step()
 
         print("best acc:", best_ACC)
-        # best_ACC = 0
         utils.save_checkpoint({
             'state_dict': best_model.state_dict(),
         }, model_path, "{}_{:.3f}&{:.3f}_{:.2f}.tar".format(model_name, a1, a2, best_ACC))
@@ -134,3 +133,4 @@ if __name__ == '__main__':
     testloader = utils.init_dataloader(loaded_args, test_file, mode="test")
 
     main(args, loaded_args, trainloader, testloader)
+
