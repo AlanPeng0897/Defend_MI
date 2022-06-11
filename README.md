@@ -1,13 +1,14 @@
 # Bilateral Dependency Optimization: Defending Against Model-inversion Attacks
-KDD-2022 (double blind)
+Hi, this is the code for our work "Bilateral Dependency Optimization: Defending Against Model-inversion Attacks" 
+presented in KDD2022.
 
 # Requiements
 This code has been tested on Ubuntu 16.04/18.04, with Python 3.7, Pytorch 1.7 and CUDA 10.2/11.0
 
 # Getting started
-Download relevent datasets: CelebA, MNIST, CIFAR-10.
+Download relevent datasets: CelebA, MNIST.
 - [CelebA](http://mmlab.ie.cuhk.edu.hk/projects/CelebA.html)
-- MNIST and CIFAR-10
+- MNIST
     ```
     python prepare_dataset.py
     ```
@@ -65,11 +66,9 @@ Here we only provide the weights file of the well-trained defense models achieve
 - DMI
     - Weights file (defense model / eval model / GAN) :
         - place [defense model](https://1drv.ms/u/s!An_XOOYcXU0GggTyiELgboDjOa0y?e=OufV3X) in `BiDO/target_model/mnist/COCO/`
-        - place [defense model](https://1drv.ms/u/s!An_XOOYcXU0GghDpqZR3UOeTSyEF?e=xoHhr3) in `BiDO/target_model/cifar/COCO/`
         - place [evaluation classifer](https://1drv.ms/u/s!An_XOOYcXU0GgXqBElsXK0DQCKAD?e=07oQq4) in `DMI/eval_model/`
         - place [improved GAN for celeba](https://1drv.ms/u/s!An_XOOYcXU0GgW4HgzYQCTBu7Coq?e=di6QmO) in `DMI/improvedGAN/celeba/HSIC/`
         - place [improved GAN for mnist](https://1drv.ms/u/s!An_XOOYcXU0GgghNCBXxSHRX--Rq?e=CJeK1X) in `DMI/improvedGAN/mnist/COCO/`
-        - place [improved GAN for cifar](https://1drv.ms/u/s!An_XOOYcXU0GghONsnwM4k_rWTo0?e=kyLRvr) in `DMI/improvedGAN/cifar/COCO/`
     - Launch attack
         ```
         #balancing hyper-parameters: (0.05, 0.5)
@@ -77,8 +76,6 @@ Here we only provide the weights file of the well-trained defense models achieve
         # note: we have made a small mistake when reporting balancing hyper-parameters of mnist and cifar in the Appendix, please refer to parameter settings herein
         #balancing hyper-parameters: (1, 50)
         python recovery.py --dataset=mnist --defense=COCO
-        #balancing hyper-parameters: (0.1, 5)
-        python recovery.py --dataset=cifar --defense=COCO
         ```
     - Calculate FID
         ```
@@ -88,9 +85,6 @@ Here we only provide the weights file of the well-trained defense models achieve
         # mnist
         cd attack_res/mnist/pytorch-fid && python private_domain.py 
         python fid_score.py ../mnist/trainset/ ../mnist/COCO/all/ --dataset=mnist
-        # cifar
-        cd attack_res/mnist/pytorch-fid && python private_domain.py 
-        python fid_score.py ../cifar/trainset/ ../cifar/COCO/all/ --dataset=cifar
         ```
 
 - VMI  
@@ -116,6 +110,22 @@ To run this code, you need ~38G of memory for data loading, the attacking of 20 
         ```
         python classify_mnist.py --epochs=100 --dataset=celeba --output_dir=./clf_results/celeba/hsic_0.1&2 --model=ResNetClsH --measure=hsic --a1=0.1 --a2=2
         ```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
