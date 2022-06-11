@@ -68,9 +68,6 @@ if __name__ == "__main__":
     elif args.dataset == 'mnist':
         G = GeneratorMNIST(z_dim)
         DG = DGWGAN32()
-    elif args.dtaset == 'cxr':
-        G = GeneratorCXR(z_dim)
-        DG = DGWGAN(1, 64)
 
     G = torch.nn.DataParallel(G).cuda()
     DG = torch.nn.DataParallel(DG).cuda()
