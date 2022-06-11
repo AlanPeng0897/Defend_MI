@@ -78,8 +78,17 @@ if __name__ == "__main__":
 
     if args.dataset == 'celeba':
         if args.defense == 'vib':
-            # beta, ac = 1e-3, 83.42
-            # beta, ac = 3e-3, 78.70
+            '''
+             python k+1_gan_vib.py --defense=vib --beta=0.003 --ac=79.82 && 
+             python k+1_gan_vib.py --defense=vib --beta=0.01  --ac=70.98 && 
+             python k+1_gan_vib.py --defense=vib --beta=0.02  --ac=59.14 && 
+             python recover_vib.py --defense=vib --beta=0.003 --ac=79.82  --iter=3000 --verbose && 
+             python recover_vib.py --defense=vib --beta=0.01  --ac=70.98  --iter=3000 --verbose &&
+             python recover_vib.py --defense=vib --beta=0.02  --ac=59.14  --iter=3000 --verbose
+            '''
+            # beta, ac = 3e-3, 79.82
+            # beta, ac = 1e-2, 70.98
+            # beta, ac = 2e-2, 59.14
             beta = args.beta
             ac = args.acc
             T = model.VGG16_vib(n_classes)
@@ -94,7 +103,8 @@ if __name__ == "__main__":
             Dpath = os.path.join(save_model_dir, "{}_D_beta_{:.3f}_{:.2f}.tar").format(model_name, beta, ac)
 
         elif args.defense == 'reg':
-            ac = 86.21
+            # ac = 87.27
+            ac = 86.14
             T = model.VGG16(n_classes)
             T = torch.nn.DataParallel(T).cuda()
             path_T = os.path.join(args.model_path, args.dataset, args.defense, f"VGG16_reg_{ac:.2f}.tar")
@@ -107,11 +117,11 @@ if __name__ == "__main__":
 
     elif args.dataset == 'mnist':
         if args.defense == 'vib':
-            beta = args.beta
-            ac = args.acc
+            beta = args.beta = 0.1
+            ac = args.acc = 99.06
             T = model.MCNN_vib(n_classes)
             T = torch.nn.DataParallel(T).cuda()
-            path_T = os.path.join("../BiDO/target_model/{}".format(args.dataset),args.defense,
+            path_T = os.path.join("../BiDO/target_model/{}".format(args.dataset), args.defense,
                                   f"{model_name}_beta{beta:.3f}_{ac:.2f}.tar")
 
             ckp_T = torch.load(path_T)
@@ -131,42 +141,6 @@ if __name__ == "__main__":
             Gpath = os.path.join(save_model_dir, "{}_G_reg_{:.2f}.tar").format(model_name, ac)
             Dpath = os.path.join(save_model_dir, "{}_D_reg_{:.2f}.tar").format(model_name, ac)
 
-    elif args.dataset == 'cifar':
-        if args.defense == 'reg':
-            ac = args.acc
-            T = VGG16(n_classes, args.dataset)
-            T = torch.nn.DataParallel(T).cuda()
-            path_T = os.path.join(args.model_path, args.dataset, f"VGG16_reg_{ac:.2f}.tar")
-
-            ckp_T = torch.load(path_T)
-            T.load_state_dict(ckp_T['state_dict'])
-
-            Gpath = os.path.join(save_model_dir, "{}_G_reg_{:.2f}.tar").format(model_name, ac)
-            Dpath = os.path.join(save_model_dir, "{}_D_reg_{:.2f}.tar").format(model_name, ac)
-
-        else:
-            beta = args.beta
-            ac = args.acc
-            T = VGG16_vib(n_classes, args.dataset)
-            T = torch.nn.DataParallel(T).cuda()
-            path_T = os.path.join("../BiDO/target_model/{}".format(args.dataset),
-                                  f"{model_name}_beta{beta:.3f}_{ac:.2f}.tar")
-            ckp_T = torch.load(path_T)
-            T.load_state_dict(ckp_T['state_dict'])
-            Gpath = os.path.join(save_model_dir, "{}_G_beta_{:.3f}_{:.2f}.tar").format(model_name, beta, ac)
-            Dpath = os.path.join(save_model_dir, "{}_D_beta_{:.3f}_{:.2f}.tar").format(model_name, beta, ac)
-
-    elif args.dataset == 'chestxray':
-        ac = 45.90
-        T = model.ResNetCls(nclass=n_classes)
-        path_T = os.path.join(args.model_path, args.dataset, "best_ckpt.pt")
-        ckp_T = torch.load(path_T)
-        T.load_state_dict(ckp_T, strict=False)
-        T = torch.nn.DataParallel(T).cuda()
-
-        Gpath = os.path.join(save_model_dir, "{}_G_reg_{:.2f}.tar").format(model_name, ac)
-        Dpath = os.path.join(save_model_dir, "{}_D_reg_{:.2f}.tar").format(model_name, ac)
-
     print("---------------------Training [%s]------------------------------" % stage)
 
     if args.dataset == 'celeba':
@@ -177,13 +151,6 @@ if __name__ == "__main__":
         G = GeneratorMNIST(z_dim)
         DG = MinibatchDiscriminator_MNIST()
 
-    elif args.dataset == 'chestxray':
-        G = GeneratorChestX(z_dim)
-        DG = MinibatchDiscriminator_ChestX()
-
-    elif args.dataset == 'cifar':
-        G = GeneratorCIFAR(z_dim)
-        DG = MinibatchDiscriminator_CIFAR()
 
     G = torch.nn.DataParallel(G).cuda()
     DG = torch.nn.DataParallel(DG).cuda()
@@ -192,44 +159,22 @@ if __name__ == "__main__":
 
     entropy = HLoss()
 
-    if args.dataset == 'chestxray':
-        sys.path.append('../VMI')
-        import chestxray
-
-        bs = 64
-        imgSize = 128
-        aux_x = chestxray.load_aux_cache(imgSize)
-        dataloader = torch.utils.data.DataLoader(torch.utils.data.TensorDataset(aux_x),
-                                                 batch_size=bs, shuffle=True, num_workers=2)
-    else:
-        _, dataloader = utils.init_dataloader(loaded_args, file_path, batch_size, mode="gan")
+    _, dataloader = utils.init_dataloader(loaded_args, file_path, batch_size, mode="gan")
 
     step = 0
     for epoch in range(0, epochs):
         start = time.time()
 
-        if args.dataset == 'chestxray':
-            unlabel_loader1 = torch.utils.data.DataLoader(torch.utils.data.TensorDataset(aux_x),
-                                                          batch_size=bs, shuffle=True, num_workers=2).__iter__()
-            unlabel_loader2 = torch.utils.data.DataLoader(torch.utils.data.TensorDataset(aux_x),
-                                                          batch_size=bs, shuffle=True, num_workers=2).__iter__()
-        else:
-            _, unlabel_loader1 = init_dataloader(loaded_args, file_path, batch_size, mode="gan", iterator=True)
-            _, unlabel_loader2 = init_dataloader(loaded_args, file_path, batch_size, mode="gan", iterator=True)
+        _, unlabel_loader1 = init_dataloader(loaded_args, file_path, batch_size, mode="gan", iterator=True)
+        _, unlabel_loader2 = init_dataloader(loaded_args, file_path, batch_size, mode="gan", iterator=True)
 
         for i, imgs in enumerate(dataloader):
-            if isinstance(imgs, list):
-                imgs = imgs[0]
             current_iter = epoch * len(dataloader) + i + 1
             step += 1
             imgs = imgs.cuda()
             bs = imgs.size(0)
             x_unlabel = unlabel_loader1.next()
             x_unlabel2 = unlabel_loader2.next()
-
-            if isinstance(x_unlabel, list):
-                x_unlabel = x_unlabel[0]
-                x_unlabel2 = x_unlabel2[0]
 
             freeze(G)
             unfreeze(DG)
@@ -282,9 +227,9 @@ if __name__ == "__main__":
         print("Epoch:%d \tTime:%.2f\tD_loss:%.2f\tG_loss:%.2f\t train_acc:%.2f" % (epoch, interval, dg_loss, g_loss,
                                                                                    acc))
 
-        # if epoch + 1 >= 100 and (epoch + 1) % 10 == 0:
-        torch.save({'state_dict': G.state_dict()}, Gpath)
-        torch.save({'state_dict': DG.state_dict()}, Dpath)
+        if epoch + 1 >= 100:
+            torch.save({'state_dict': G.state_dict()}, Gpath)
+            torch.save({'state_dict': DG.state_dict()}, Dpath)
 
         if (epoch + 1) % 5 == 0:
             z = torch.randn(32, z_dim).cuda()
