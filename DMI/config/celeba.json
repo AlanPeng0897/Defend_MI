@@ -15,7 +15,6 @@
     "z_dim": 100,
     "epochs": 100,
     "n_critic": 5,
-    "gpus": "0",
     "unlabel_weight": 10
   },
   "FaceNet": {
