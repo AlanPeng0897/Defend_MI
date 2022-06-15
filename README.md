@@ -2,6 +2,19 @@
 Hi, this is the code for our work "Bilateral Dependency Optimization: Defending Against Model-inversion Attacks" 
 presented in KDD2022.
 
+If you find this code useful in your research then please cite
+
+```
+
+@inproceedings{BiDO,
+title={Probabilistic Margins for Instance Reweighting in Adversarial Training},
+author={Xiong Peng and Feng Liu and Jingfeng Zhang and Long Lan and Junjie Ye and Tongliang Liu and Bo Han},
+booktitle={KDD},
+year={2022}
+}
+
+```
+
 # Requiements
 This code has been tested on Ubuntu 16.04/18.04, with Python 3.7, Pytorch 1.7 and CUDA 10.2/11.0
 
