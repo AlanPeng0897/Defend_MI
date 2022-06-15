@@ -7,7 +7,7 @@ If you find this code useful in your research then please cite
 ```
 
 @inproceedings{BiDO,
-title={Probabilistic Margins for Instance Reweighting in Adversarial Training},
+title={Bilateral Dependency Optimization: Defending Against Model-inversion Attacks},
 author={Xiong Peng and Feng Liu and Jingfeng Zhang and Long Lan and Junjie Ye and Tongliang Liu and Bo Han},
 booktitle={KDD},
 year={2022}
