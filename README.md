@@ -6,9 +6,9 @@ If you find this code useful in your research then please cite
 
 ```
 
-@inproceedings{BiDO,
+@inproceedings{peng2022bilateral,
 title={Bilateral Dependency Optimization: Defending Against Model-inversion Attacks},
-author={Xiong Peng and Feng Liu and Jingfeng Zhang and Long Lan and Junjie Ye and Tongliang Liu and Bo Han},
+author={Peng, Xiong and Liu, Feng and Zhang, Jingfeng and Lan, Long and Ye, Junjie and Liu, Tongliang and Han, Bo},
 booktitle={KDD},
 year={2022}
 }
