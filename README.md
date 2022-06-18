@@ -86,7 +86,6 @@ Here we only provide the weights file of the well-trained defense models achieve
         ```
         #balancing hyper-parameters: (0.05, 0.5)
         python recovery.py --dataset=celeba --defense=HSIC
-        # note: we have made a small mistake when reporting balancing hyper-parameters of mnist and cifar in the Appendix, please refer to parameter settings herein
         #balancing hyper-parameters: (1, 50)
         python recovery.py --dataset=mnist --defense=COCO
         ```
