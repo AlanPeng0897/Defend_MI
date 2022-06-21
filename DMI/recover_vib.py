@@ -50,7 +50,6 @@ def dist_inversion(args, G, D, T, E, iden, lr=2e-2, lamda=100, iter_times=1500, 
 
     # NOTE
     mu = Variable(torch.zeros(bs, 100), requires_grad=True)
-    # log_var = Variable(torch.ones(bs, 100), requires_grad=True)
     log_var = Variable(torch.zeros(bs, 100), requires_grad=True)
 
     params = [mu, log_var]
@@ -274,12 +273,6 @@ if __name__ == "__main__":
             aver_var,
             aver_var5))
 
-
-        # if args.defense == 'reg':
-        #     os.system("cd attack_res/pytorch-fid/ && python fid_score.py ../celeba/trainset/ ../celeba/reg/all/")
-        # elif args.defense == 'vib':
-        #     os.system("cd attack_res/pytorch-fid/ && python fid_score.py ../celeba/trainset/ ../celeba/vib/all/")
-
     elif args.dataset == 'mnist':
         E = model.SCNN(10)
         path_E = './eval_ckp/SCNN_99.42.tar'
@@ -335,24 +328,13 @@ if __name__ == "__main__":
             iden = torch.from_numpy(np.arange(5))
             acc, acc5, var, var5 = dist_inversion(args, G, D, T, E, iden, lr=2e-2, lamda=100, iter_times=args.iter,
                                                   clip_range=1, improved=True, num_seeds=100, verbose=args.verbose)
-            # aver_acc += acc / K
-            # aver_acc5 += acc5 / K
-            # aver_var += var / K
-            # aver_var5 += var5 / K
 
-            # os.system(
-            #     f"cd attack_res/pytorch-fid/ && "
-            #     f"python fid_score.py ../mnist/trainset/ ../mnist/{args.defense}/all/ --dataset=mnist && "
-            #     f"python fid_score_raw.py ../mnist/trainset/ ../mnist/{args.defense}/all/")
 
             fid_value = calculate_fid_given_paths(args.dataset,
                                                   [f'attack_res/{args.dataset}/trainset/',
                                                    f'attack_res/{args.dataset}/{args.defense}/all/'],
                                                   50, 1, 2048)
             print(f'FID:{fid_value:.4f}')
-
-            if fid_value < 190:
-                continue
 
             fid.append(fid_value)
             res_all.append([acc, acc5, var, var5])
