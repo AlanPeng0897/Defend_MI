@@ -121,7 +121,6 @@ def inversion(args, G, D, T, E, iden, lr=2e-2, momentum=0.9, lamda=100, iter_tim
     acc_var = statistics.stdev(res)
     acc_var5 = statistics.stdev(res5)
     print("Acc:{:.2f}\tAcc_5:{:.2f}\tAcc_var:{:.4f}\tacc_var5{:.4f}".format(acc, acc_5, acc_var, acc_var5))
-    # tvls.save_image(final_res, os.path.join(save_img_dir, f"vib{idx}.png"), padding=0, nrow=4)
 
     return acc, acc_5, acc_var, acc_var5
 
@@ -181,23 +180,6 @@ if __name__ == '__main__':
                 # (0.05, 0.5, 78.89),
                 # (0.05, 1.0, 69.68),
                 # (0.05, 2.5, 56.62),
-                # 3
-                # (0.05, 0.5, 80.78),
-                # (0.05, 1.0, 71.44),
-                # (0.05, 2.5, 55.72),
-                # COCO
-                # 1
-                # (5, 35, 79.99),
-                # (12, 60, 69.55),
-                # (17, 85, 64.53),
-                # 2
-                # (5, 35, 81.82),
-                # (12, 60, 73.67),
-                # (17, 85, 56.35),
-                # 3
-                (5, 35, 81.12),
-                (12, 60, 69.65),
-                (17, 85, 66.16),
             ]
             for (a1, a2, ac) in hp_ac_list:
                 print("a1:", a1, "a2:", a2, "test_acc:", ac)
@@ -234,11 +216,8 @@ if __name__ == '__main__':
         else:
             if args.defense == "vib":
                 path_T_list = [
-                    # os.path.join(args.model_path, args.dataset, "VGG16_beta0.001_83.42.tar"),
                     os.path.join(args.model_path, args.dataset, args.defense, "VGG16_beta0.003_77.59.tar"),
-                    # os.path.join(args.model_path, args.dataset, "VGG16_beta0.005_74.61.tar"),
                     os.path.join(args.model_path, args.dataset, args.defense, "VGG16_beta0.010_67.72.tar"),
-                    # os.path.join(args.model_path, args.dataset, "VGG16_beta0.015_62.01.tar"),
                     os.path.join(args.model_path, args.dataset, args.defense, "VGG16_beta0.020_59.24.tar"),
                 ]
                 for path_T in path_T_list:
