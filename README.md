@@ -2,7 +2,7 @@
 Hi, this is the code for our work "Bilateral Dependency Optimization: Defending Against Model-inversion Attacks" 
 presented in KDD2022.
 
-If you find this code helpful in your research, please cite
+If you find this code helpful in your research, please consider citing
 
 ```
 
