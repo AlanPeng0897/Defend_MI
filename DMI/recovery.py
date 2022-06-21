@@ -32,11 +32,6 @@ if __name__ == "__main__":
 
     z_dim = 100
     ############################# mkdirs ##############################
-    # log_path = os.path.join(args.root_path, "attack_logs")
-    # os.makedirs(log_path, exist_ok=True)
-
-    # log_file = f"attack_{args.dataset}_{args.defense}.txt"
-    # utils.Tee(os.path.join(log_path, log_file), 'a+')
     save_model_dir = os.path.join(args.root_path, args.dataset, args.defense)
 
     args.save_img_dir = os.path.join(args.save_img_dir, args.dataset, args.defense)
@@ -49,7 +44,6 @@ if __name__ == "__main__":
     file = "./config/" + args.dataset + ".json"
     loaded_args = load_json(json_file=file)
     stage = loaded_args["dataset"]["stage"]
-    # utils.print_params(loaded_args["dataset"], loaded_args[stage])
     model_name = loaded_args["dataset"]["model_name"]
 
     if args.dataset == 'celeba':
@@ -64,14 +58,6 @@ if __name__ == "__main__":
             # (0, 1, 64.73),
             # (0.1, 0, 0.83),
             # (0.1, 1, 76.36),
-
-            #COCO
-            (5, 25, 81.55),
-            (10, 50, 74.53),
-            (15, 75, 53.39),
-
-            (0, 50, 75.13),
-            (10, 0, 85.04),
         ]
 
         for (a1, a2, ac) in hp_ac_list:
@@ -140,7 +126,6 @@ if __name__ == "__main__":
                     aver_var,
                     aver_var5))
 
-            # os.system("cd attack_res/pytorch-fid/ && python fid_score.py ../celeba/trainset/ ../celeba/HSIC/all/")
 
     elif args.dataset == 'mnist':
         hp_ac_list = [
@@ -188,15 +173,7 @@ if __name__ == "__main__":
                 iden = torch.from_numpy(np.arange(5))
                 acc, acc5, var, var5 = dist_inversion(args, G, D, T, E, iden, lr=2e-2, lamda=100, iter_times=args.iter,
                                                       clip_range=1, improved=True, num_seeds=100, verbose=args.verbose)
-                # aver_acc += acc / K
-                # aver_acc5 += acc5 / K
-                # aver_var += var / K
-                # aver_var5 += var5 / K
 
-                # os.system(
-                #     f"cd attack_res/pytorch-fid/ && "
-                #     f"python fid_score.py ../mnist/trainset/ ../mnist/{args.defense}/all/ --dataset=mnist && "
-                #     f"python fid_score_raw.py ../mnist/trainset/ ../mnist/{args.defense}/all/")
 
                 fid_value = calculate_fid_given_paths(args.dataset,
                                                       [f'attack_res/{args.dataset}/trainset/',
@@ -204,8 +181,6 @@ if __name__ == "__main__":
                                                       50, 1, 2048)
                 print(f'FID:{fid_value:.4f}')
 
-                if fid_value < 260:
-                    continue
 
                 fid.append(fid_value)
                 res_all.append([acc, acc5, var, var5])
@@ -215,8 +190,4 @@ if __name__ == "__main__":
             avg_fid, var_fid = statistics.mean(fid), statistics.stdev(fid)
             print(f"Acc:{res[0]:.4f} (+/- {res[2]:.4f}), Acc5:{res[1]:.4f} (+/- {res[3]:.4f})")
             print(f'FID:{avg_fid:.4f} (+/- {var_fid:.4f})')
-            # print("Average Acc:{:.2f}\tAverage Acc5:{:.2f}\tAverage Acc_var:{:.4f}\tAverage Acc_var5:{:.4f}".format(
-            #     aver_acc,
-            #     aver_acc5,
-            #     aver_var,
-            #     aver_var5, ))
+
