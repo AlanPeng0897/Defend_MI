@@ -66,9 +66,6 @@ if __name__ == "__main__":
     save_model_dir = os.path.join(args.root_path, args.dataset, args.defense)
     os.makedirs(save_model_dir, exist_ok=True)
 
-    # save_img_dir = "./improvedGAN/imgs_improved_{}".format(args.dataset)
-    # os.makedirs(save_img_dir, exist_ok=True)
-
     ############################# mkdirs ##############################
 
     file_path = loaded_args['dataset']['gan_file_path']
@@ -93,42 +90,6 @@ if __name__ == "__main__":
             # (0.05, 0.5, 80.35),
             # (0.05, 1.0, 70.31),
             # (0.05, 2.5, 53.49),
-
-            # (0.1, 0.5, 79.82),
-            # (0.1, 1, 76.36),
-            # # (0.1, 5),x
-            #
-            # (0.2, 1, 74.34),
-            # (0.2, 2, 70.58),
-            # (0.2, 10,43.72),
-
-            # celeba - coco
-            # (1, 5, 83.64),
-            # (1, 20, 82.58),
-            # (1, 50, 73.47),
-            # (15, 75, 53.39)
-            # (5, 25, 81.55),
-            # (5, 50, 73.20),
-            # (5, 100, x),
-
-            # (10, 50, 74.53),
-            # (10, 200,x),
-
-            # coco - ablation
-            # (0, 50, 75.13),
-            # (10, 0, 85.04),
-
-            # hsic - ablation
-            # (0.1, 0, 0.83),
-            # (0, 1, 64.73),
-
-            #FT
-            # (0.05, 0.25, 85.07),
-            # (0.05, 0.5, 86.90),
-            # (0.1, 0.5, 82.88),
-            # (0.1, 1, 83.68),
-            # (0.2, 1, 80.19),
-            # (0.2, 2, 80.09),
         ]
         for (a1, a2, ac) in hp_ac_list:
             print("a1:", a1, "a2:", a2, "test_acc:", ac)
@@ -335,12 +296,6 @@ if __name__ == "__main__":
                     torch.save({'state_dict': G.state_dict()}, Gpath)
                     torch.save({'state_dict': DG.state_dict()}, Dpath)
 
-                # if (epoch + 1) % 5 == 0:
-                #     z = torch.randn(32, z_dim).cuda()
-                #     fake_image = G(z)
-                #     save_tensor_images(fake_image.detach(),
-                #                        os.path.join(save_img_dir, "improved_celeba_img_{}_{}.png".format(mode, epoch + 1)),
-                #                        nrow=8)
 
 
 
