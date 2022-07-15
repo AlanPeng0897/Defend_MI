@@ -45,7 +45,7 @@ from PIL import Image
 import sys
 
 sys.path.append('../BiDO/')
-from model import SCNN, VGG19, VGG19_CXR
+from model import SCNN, VGG19
 import evolve, utils
 
 try:

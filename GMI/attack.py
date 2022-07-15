@@ -4,7 +4,7 @@ import torch.nn as nn
 import statistics
 from argparse import ArgumentParser
 from fid_score import calculate_fid_given_paths
-from fid_score0 import calculate_fid_given_paths0
+from fid_score_raw import calculate_fid_given_paths0
 
 device = "cuda"
 
@@ -144,7 +144,7 @@ if __name__ == '__main__':
     args.save_img_dir = os.path.join(args.save_img_dir, 'all')
     os.makedirs(args.save_img_dir, exist_ok=True)
 
-    eval_path = "./eval_ckp"
+    eval_path = "./eval_model"
     ############################# mkdirs ##############################
 
     if args.dataset == 'celeba':
@@ -157,13 +157,13 @@ if __name__ == '__main__':
         ckp_E = torch.load(e_path)
         E.load_state_dict(ckp_E['state_dict'], strict=False)
 
-        g_path = "./result/models_celeba_gan/celeba_G_110.tar"
+        g_path = "./result/models_celeba_gan/celeba_G_300.tar"
         G = generator.Generator()
         G = nn.DataParallel(G).cuda()
         ckp_G = torch.load(g_path)
         G.load_state_dict(ckp_G['state_dict'], strict=False)
 
-        d_path = "./result/models_celeba_gan/celeba_D_110.tar"
+        d_path = "./result/models_celeba_gan/celeba_D_300.tar"
         D = discri.DGWGAN()
         D = nn.DataParallel(D).cuda()
         ckp_D = torch.load(g_path)
@@ -173,7 +173,7 @@ if __name__ == '__main__':
             hp_ac_list = [
                 # HSIC
                 # 1
-                # (0.05, 0.5, 80.45),
+                # (0.05, 0.5, 80.35),
                 # (0.05, 1.0, 70.08),
                 # (0.05, 2.5, 56.18),
                 # 2
