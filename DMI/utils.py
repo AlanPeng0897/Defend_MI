@@ -159,14 +159,6 @@ def save_tensor_images(images, filename, nrow=None, normalize=True):
         tvls.save_image(images, filename, normalize=normalize, nrow=nrow, padding=0)
 
 
-def load_peng_state_dict(net, state_dict):
-    print("load self-constructed model!!!")
-    net_state = net.state_dict()
-    for ((name, param), (old_name, old_param),) in zip(net_state.items(), state_dict.items()):
-        # print(name, '---', old_name)
-        net_state[name].copy_(old_param.data)
-
-
 def load_my_state_dict(self, state_dict):
     own_state = self.state_dict()
     # print(state_dict)
