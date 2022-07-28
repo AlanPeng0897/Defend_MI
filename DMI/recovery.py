@@ -77,14 +77,11 @@ if __name__ == "__main__":
             ckp_D = torch.load(path_D)
             D.load_state_dict(ckp_D['state_dict'], strict=False)
 
-            T = model.VGG16(1000)
+            T = model.VGG16(1000, True)
             T = torch.nn.DataParallel(T).cuda()
             path_T = os.path.join(args.model_path, f"{args.dataset}", args.defense,
                                   "{}_{:.3f}&{:.3f}_{:.2f}.tar".format(model_name, a1, a2, ac))
 
-            # ckp_T = torch.load(path_T)
-            # T.load_state_dict(ckp_T['state_dict'], strict=False)
-            # utils.load_peng_state_dict(T, ckp_T['state_dict'])
             ckp_T = torch.load(path_T)
             T.load_state_dict(ckp_T['state_dict'], strict=False)
 
