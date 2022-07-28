@@ -94,13 +94,13 @@ if __name__ == "__main__":
         for (a1, a2, ac) in hp_ac_list:
             print("a1:", a1, "a2:", a2, "test_acc:", ac)
 
-            T = model.VGG16(1000)
+            T = model.VGG16(1000, True)
             T = torch.nn.DataParallel(T).cuda()
             path_T = os.path.join(args.model_path, f"{args.dataset}/",args.defense,
                                   "{}_{:.3f}&{:.3f}_{:.2f}.tar".format(model_name, a1, a2, ac))
 
             ckp_T = torch.load(path_T)
-            utils.load_peng_state_dict(T, ckp_T['state_dict'])
+            T.load_state_dict(ckp_T['state_dict'], strict=False)
 
             print("---------------------Training [%s]------------------------------" % stage)
 
