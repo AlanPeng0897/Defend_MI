@@ -6,12 +6,9 @@
 </p>
 <!-- label - message - color -->
 
-<!-- # Bilateral Dependency Optimization: Defending Against Model-inversion Attacks
-Hi, this is the code for our work "Bilateral Dependency Optimization: Defending Against Model-inversion Attacks" 
-presented in KDD2022. -->
 Hi, this is the code for our KDD 2022 paper: *[Bilateral Dependency Optimization: Defending Against Model-inversion Attacks](https://arxiv.org/pdf/2206.05483.pdf)*.
-
-
+![BiDO_vs_MID](assets/BiDO_vs_MID.jpg)
+Overview of MID framework vs. bilateral dependency optimization (BiDO) framework. BiDO forces DNNs to learn robust latent representations by minimizing $𝑑(𝑋,𝑍_j)$ to limit redundant information propagated from the inputs to the latent representations while maximizing $𝑑(𝑍_j,𝑌)$ to keep the latent representations informative enough of the label.
 
 # Requiements
 This code has been tested on Ubuntu 16.04/18.04, with Python 3.7, Pytorch 1.7 and CUDA 10.2/11.0
