@@ -41,9 +41,9 @@ The directory of dataset are orgnized as follows:
 You can also skip to the next section for defending against MI attack with well-trained defense models.
 - For GMI and KED-MI
     ```
-    #dataset:celeba, mnist, cifar; 
-    #measure:COCO, HSIC; 
-    #balancing hyper-parameters: tune them in train_HSIC.py
+    # dataset:celeba, mnist, cifar; 
+    # measure:COCO, HSIC; 
+    # balancing hyper-parameters: tune them in train_HSIC.py
     python train_HSIC.py --measure=HSIC --dataset=celeba
     ```
     For KED-MI, if you trained a defense model yourself, you have to train a attack model (generative model) specific to this defense model additionally.
@@ -67,7 +67,7 @@ Here we only provide the weights file of the well-trained defense models that ac
 
     - Launch attack
         ```
-        #balancing hyper-parameters: (0.05, 0.5)
+        # balancing hyper-parameters: (0.05, 0.5)
         python attack.py --dataset=celeba --defense=HSIC
         ```
     - Calculate FID
@@ -86,9 +86,9 @@ Here we only provide the weights file of the well-trained defense models that ac
         - Place [improved GAN for mnist](https://1drv.ms/u/s!An_XOOYcXU0GgghNCBXxSHRX--Rq?e=CJeK1X) in `DMI/improvedGAN/mnist/COCO/`
     - Launch attack
         ```
-        #balancing hyper-parameters: (0.05, 0.5)
+        # balancing hyper-parameters: (0.05, 0.5)
         python recovery.py --dataset=celeba --defense=HSIC
-        #balancing hyper-parameters: (1, 50)
+        # balancing hyper-parameters: (1, 50)
         python recovery.py --dataset=mnist --defense=COCO
         ```
     - Calculate FID
@@ -105,7 +105,7 @@ Here we only provide the weights file of the well-trained defense models that ac
 To run this code, you need ~38G of memory for data loading, the attacking of 20 identities takes ~20 hours on a TiTAN-V GPU (12G).
     - Data (CelebA)
         ```
-        #create a link to CelebA
+        # create a link to CelebA
         cd VMI/data && ln -s ../../attack_data/CelebA/Img img_align_celeba
         python celeba.py
         ```
@@ -115,7 +115,7 @@ To run this code, you need ~38G of memory for data loading, the attacking of 20 
         - Place [StyleGAN](https://1drv.ms/u/s!An_XOOYcXU0GggWTCCJV7CAhThpR?e=osrWUK) in `VMI/pretrained/stylegan/neurips2021-celeba-stylegan/`
     - Launch attack
         ```
-        #balancing hyper-parameters: (0.1, 2)
+        # balancing hyper-parameters: (0.1, 2)
         cd VMI
         # x.sh  (1st) path/to/attack_results (2nd) config_file  (3rd) batch_size
         ./run_scripts/neurips2021-celeba-stylegan-flow.sh  'hsic_0.1&2'  'hsic_0.1&2.yml' 32
@@ -124,8 +124,6 @@ To run this code, you need ~38G of memory for data loading, the attacking of 20 
         ```
         python classify_mnist.py --epochs=100 --dataset=celeba --output_dir=./clf_results/celeba/hsic_0.1&2 --model=ResNetClsH --measure=hsic --a1=0.1 --a2=2
         ```
-
-
 
 
 # References
