@@ -1,19 +1,17 @@
-# Bilateral Dependency Optimization: Defending Against Model-inversion Attacks
+<h1 align="center">Bilateral Dependency Optimization: Defending Against Model-inversion Attacks</h1>
+<p align="center">
+    <a href="https://arxiv.org/pdf/2206.05483.pdf"><img src="https://img.shields.io/badge/arXiv-2206.05483-b31b1b.svg" alt="Paper"></a>
+    <a href="https://github.com/AlanPeng0897/Defend_MI"><img src="https://img.shields.io/badge/-Github-grey?logo=github" alt="Github"></a>
+    <a href="https://dl.acm.org/doi/abs/10.1145/3534678.3539376"> <img src="https://img.shields.io/badge/Pub-KDD%2722-blue" alt="License"> </a>
+</p>
+<!-- label - message - color -->
+
+<!-- # Bilateral Dependency Optimization: Defending Against Model-inversion Attacks
 Hi, this is the code for our work "Bilateral Dependency Optimization: Defending Against Model-inversion Attacks" 
-presented in KDD2022.
+presented in KDD2022. -->
+Hi, this is the code for our KDD 2022 paper: *[Bilateral Dependency Optimization: Defending Against Model-inversion Attacks](https://arxiv.org/pdf/2206.05483.pdf)*.
 
-If you find this code helpful in your research, please consider citing
 
-```
-
-@inproceedings{peng2022bilateral,
-title={Bilateral Dependency Optimization: Defending Against Model-inversion Attacks},
-author={Peng, Xiong and Liu, Feng and Zhang, Jingfeng and Lan, Long and Ye, Junjie and Liu, Tongliang and Han, Bo},
-booktitle={KDD},
-year={2022}
-}
-
-```
 
 # Requiements
 This code has been tested on Ubuntu 16.04/18.04, with Python 3.7, Pytorch 1.7 and CUDA 10.2/11.0
@@ -26,36 +24,40 @@ Download relevent datasets: CelebA, MNIST.
     python prepare_dataset.py
     ```
 
-The directory of dataset are orgnized as follows (take CelebA as an example):
-    
-    attack_dataset  
-    -- CelebA  
-    ---- *.txt  
-    ---- Img  
-    ------ 000001.png
-    
+The directory of dataset are orgnized as follows:
+```
+./attack_dataset
+├── MNIST 
+│   ├── *.txt 
+│   └── Img
+│       └── *.png
+└── CelebA                            
+    ├── *.txt 
+    └── Img
+        └── *.png
+```
 
-# Train with BiDO 
+# Privacy enhancement with BiDO 
 You can also skip to the next section for defending against MI attack with well-trained defense models.
-- For GMI and DMI
+- For GMI and KED-MI
     ```
     #dataset:celeba, mnist, cifar; 
     #measure:COCO, HSIC; 
     #balancing hyper-parameters: tune them in train_HSIC.py
     python train_HSIC.py --measure=HSIC --dataset=celeba
     ```
-    for DMI, if you trained a defense model yourself, you have to train the attacker specific to it additionally.
+    For KED-MI, if you trained a defense model yourself, you have to train a attack model (generative model) specific to this defense model additionally.
     ```
     # put you hyper-parameters in k+1_gan_HSIC.py first
     python k+1_gan_HSIC --dataset=celeba --defense=HSIC
     ```
 - For VMI  
-    please refer to this section (Defending against MI attacks - VMI - train with BiDO).
+    Please refer to this section (Defending against MI attacks - VMI - train with BiDO).
     
 
 
 # Defending against MI attacks 
-Here we only provide the weights file of the well-trained defense models achieve the best trade-off between model robustness and utility, which are highlighted in the experimental results.
+Here we only provide the weights file of the well-trained defense models that achieve the best trade-off between model robustness and utility, which are highlighted in the experimental results.
 - GMI
     - Weights file (defense model / eval model / GAN) :
         - place [pretrained VGG16](https://1drv.ms/u/s!An_XOOYcXU0GggMxd_xImjJ1m1fk?e=VD8Dsp) in `BiDO/target_model/`
@@ -76,7 +78,7 @@ Here we only provide the weights file of the well-trained defense models achieve
         python fid_score.py ../celeba/trainset/ ../celeba/HSIC/all/
         ```
         
-- DMI
+- KED-MI
     - Weights file (defense model / eval model / GAN) :
         - place [defense model](https://1drv.ms/u/s!An_XOOYcXU0GggTyiELgboDjOa0y?e=OufV3X) in `BiDO/target_model/mnist/COCO/`
         - place [evaluation classifer](https://1drv.ms/u/s!An_XOOYcXU0GgXqBElsXK0DQCKAD?e=07oQq4) in `DMI/eval_model/`
@@ -125,6 +127,17 @@ To run this code, you need ~38G of memory for data loading, the attacking of 20 
 
 
 
+
+# References
+If you find this code helpful in your research, please consider citing
+```bibtex
+@inproceedings{peng2022BiDO,
+title={Bilateral Dependency Optimization: Defending Against Model-inversion Attacks},
+author={Peng, Xiong and Liu, Feng and Zhang, Jingfeng and Lan, Long and Ye, Junjie and Liu, Tongliang and Han, Bo},
+booktitle={KDD},
+year={2022}
+}
+```
 
 
 
