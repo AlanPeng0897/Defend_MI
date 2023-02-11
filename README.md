@@ -103,7 +103,7 @@ Here we only provide the weights file of the well-trained defense models that ac
 
 - VMI  
 To run this code, you need ~38G of memory for data loading, the attacking of 20 identities takes ~20 hours on a TiTAN-V GPU (12G).
-    - data (CelebA)
+    - Data (CelebA)
         ```
         #create a link to CelebA
         cd VMI/data && ln -s ../../attack_data/CelebA/Img img_align_celeba
