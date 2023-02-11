@@ -139,7 +139,8 @@ year={2022}
 }
 ```
 
-
+# Implementation Credits
+Some of our implementations rely on other repos. We want to thank the authors ([MID](https://arxiv.org/abs/2009.05241), [GMI](https://arxiv.org/abs/1911.07135), [KED-MI](https://arxiv.org/abs/2010.04092), [VMI](https://arxiv.org/abs/2201.10787)) for making their code publicly available.😄
 
 
 
