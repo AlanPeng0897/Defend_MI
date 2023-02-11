@@ -166,7 +166,7 @@ if __name__ == '__main__':
         d_path = "./result/models_celeba_gan/celeba_D_300.tar"
         D = discri.DGWGAN()
         D = nn.DataParallel(D).cuda()
-        ckp_D = torch.load(g_path)
+        ckp_D = torch.load(d_path)
         D.load_state_dict(ckp_D['state_dict'], strict=False)
 
         if args.defense == 'HSIC' or args.defense == 'COCO':
