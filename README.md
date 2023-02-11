@@ -21,7 +21,7 @@ Download relevent datasets: CelebA, MNIST.
     python prepare_dataset.py
     ```
 
-The directory of dataset are orgnized as follows:
+The directory of datasets are orgnized as follows:
 ```
 ./attack_dataset
 ├── MNIST 
