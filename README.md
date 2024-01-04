@@ -14,14 +14,14 @@ Overview of MID framework vs. bilateral dependency optimization (BiDO) framework
 This code has been tested on Ubuntu 16.04/18.04, with Python 3.7, Pytorch 1.7 and CUDA 10.2/11.0
 
 # Getting started
-Download relevent datasets: CelebA, MNIST.
+Download relevant datasets: CelebA, MNIST.
 - [CelebA](http://mmlab.ie.cuhk.edu.hk/projects/CelebA.html)
 - MNIST
     ```
-    python prepare_dataset.py
+    python prepare_data.py
     ```
 
-The directory of datasets are orgnized as follows:
+The directory of datasets is organized as follows:
 ```
 ./attack_dataset
 ├── MNIST 
@@ -35,7 +35,7 @@ The directory of datasets are orgnized as follows:
 ```
 
 # Privacy enhancement with BiDO 
-You can also skip to the next section for defending against MI attack with well-trained defense models.
+You can also skip to the next section for defending against MI attacks with well-trained defense models.
 - For GMI and KED-MI
     ```
     # dataset:celeba, mnist, cifar; 
@@ -43,9 +43,9 @@ You can also skip to the next section for defending against MI attack with well-
     # balancing hyper-parameters: tune them in train_HSIC.py
     python train_HSIC.py --measure=HSIC --dataset=celeba
     ```
-    For KED-MI, if you trained a defense model yourself, you have to train a attack model (generative model) specific to this defense model additionally.
+    For KED-MI, if you trained a defense model yourself, you have to train an attack model (generative model) specific to this defense model.
     ```
-    # put you hyper-parameters in k+1_gan_HSIC.py first
+    # put your hyper-parameters in k+1_gan_HSIC.py first
     python k+1_gan_HSIC --dataset=celeba --defense=HSIC
     ```
 - For VMI  
@@ -54,7 +54,7 @@ You can also skip to the next section for defending against MI attack with well-
 
 
 # Defending against MI attacks 
-Here we only provide the weights file of the well-trained defense models that achieve the best trade-off between model robustness and utility, which are highlighted in the experimental results.
+Here, we only provide the weights file of the well-trained defense models that achieve the best trade-off between model robustness and utility, which are highlighted in the experimental results.
 - GMI
     - Weights file (defense model / eval model / GAN) :
         - Place [pretrained VGG16](https://1drv.ms/u/s!An_XOOYcXU0GggMxd_xImjJ1m1fk?e=VD8Dsp) in `BiDO/target_model/`
@@ -99,7 +99,7 @@ Here we only provide the weights file of the well-trained defense models that ac
         ```
 
 - VMI  
-To run this code, you need ~38G of memory for data loading, the attacking of 20 identities takes ~20 hours on a TiTAN-V GPU (12G).
+To run this code, you need ~38G of memory for data loading. The attacking of 20 identities takes ~20 hours on a TiTAN-V GPU (12G).
     - Data (CelebA)
         ```
         # create a link to CelebA
