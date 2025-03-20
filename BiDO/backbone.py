@@ -692,6 +692,131 @@ class ResNet(nn.Module):
         return out
 
 
+class ResNetH(nn.Module):
+    maml = False  # Default
+
+    def __init__(self, nc, block, list_of_num_layers, list_of_out_dims, flatten=True, final_fmap_size=7):
+        # list_of_num_layers specifies number of layers in each stage
+        # list_of_out_dims specifies number of output channel for each stage
+        super(ResNetH, self).__init__()
+        assert len(list_of_num_layers) == 4, 'Can have only four stages'
+        if self.maml:
+            conv1 = Conv2d_fw(nc, 64, kernel_size=7, stride=2, padding=3,
+                              bias=False)
+            bn1 = BatchNorm2d_fw(64)
+        else:
+            conv1 = nn.Conv2d(nc, 64, kernel_size=7, stride=2, padding=3,
+                              bias=False)
+            bn1 = nn.BatchNorm2d(64)
+
+        relu = nn.ReLU()
+        pool1 = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
+
+        init_layer(conv1)
+        init_layer(bn1)
+
+        self.block1 = nn.Sequential(conv1, bn1, relu, pool1)
+
+        indim = 64
+        # for i in range(4):
+        #     inner_block = []
+        #     for j in range(list_of_num_layers[i]):
+        #         half_res = (i >= 1) and (j == 0)
+        #         B = block(indim, list_of_out_dims[i], half_res)
+        #         inner_block.append(B)
+        #         indim = list_of_out_dims[i]
+        #
+        # trunk.append(nn.Sequential(*inner_block))
+        i = 0
+        inner_block = []
+        for j in range(list_of_num_layers[i]):
+            half_res = (i >= 1) and (j == 0)
+            B = block(indim, list_of_out_dims[i], half_res)
+            inner_block.append(B)
+            indim = list_of_out_dims[i]
+        self.block2 = nn.Sequential(*inner_block)
+
+        i = 1
+        inner_block = []
+        for j in range(list_of_num_layers[i]):
+            half_res = (i >= 1) and (j == 0)
+            B = block(indim, list_of_out_dims[i], half_res)
+            inner_block.append(B)
+            indim = list_of_out_dims[i]
+        self.block3 = nn.Sequential(*inner_block)
+
+        i = 2
+        inner_block = []
+        for j in range(list_of_num_layers[i]):
+            half_res = (i >= 1) and (j == 0)
+            B = block(indim, list_of_out_dims[i], half_res)
+            inner_block.append(B)
+            indim = list_of_out_dims[i]
+        self.block4 = nn.Sequential(*inner_block)
+
+        i = 3
+        inner_block = []
+        for j in range(list_of_num_layers[i]):
+            half_res = (i >= 1) and (j == 0)
+            B = block(indim, list_of_out_dims[i], half_res)
+            inner_block.append(B)
+            indim = list_of_out_dims[i]
+        self.block5 = nn.Sequential(*inner_block)
+
+        if flatten:
+            avgpool = nn.AvgPool2d(final_fmap_size)
+            self.block6 = nn.Sequential(avgpool, Flatten())
+            self.final_feat_dim = indim
+        else:
+            self.final_feat_dim = [indim, final_fmap_size, final_fmap_size]
+
+    def forward(self, x):
+        hiddens = []
+        x = self.block1(x)
+        hiddens.append(x)
+
+        x = self.block2(x)
+        hiddens.append(x)
+
+        x = self.block3(x)
+        hiddens.append(x)
+
+        x = self.block4(x)
+        hiddens.append(x)
+
+        x = self.block5(x)
+        hiddens.append(x)
+
+        x = self.block6(x)
+        torch.cuda.empty_cache()
+
+        return x, hiddens
+
+
+def ResNetL_IH(L, imgSize, nc, flatten=True):
+    if imgSize == 32:
+        ffs = 1
+    elif imgSize == 64:
+        ffs = 2
+    elif imgSize == 128:
+        ffs = 4
+    elif imgSize == 256:
+        ffs = 8
+    else:
+        raise
+
+    if L == 10:
+        net = ResNetH(nc, SimpleBlock, [1, 1, 1, 1], [
+            64, 128, 256, 512], flatten, final_fmap_size=ffs)
+    elif L == 34:
+        net = ResNetH(nc, SimpleBlock, [3, 4, 6, 3], [
+            64, 128, 256, 512], flatten, final_fmap_size=ffs)
+    elif L == 50:
+        net = ResNetH(nc, BottleneckBlock, [3, 4, 6, 3], [
+            256, 512, 1024, 2048], flatten, final_fmap_size=ffs)
+    return net
+
+
 def Conv4BWBBB():
     return ConvNetBW(4, bbb=True)
 
