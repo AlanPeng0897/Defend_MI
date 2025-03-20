@@ -9,6 +9,7 @@ from torch.nn.modules.loss import _Loss
 import math, evolve, hsic
 from backbone import ResNetL_I, ResNetL_IH
 
+
 class VGG19(nn.Module):
     def __init__(self, n_classes=5):
         super(VGG19, self).__init__()
@@ -686,6 +687,7 @@ class ResNetCls(nn.Module):
 
         return feature, z
 
+
 class ResNetClsH(nn.Module):
     def __init__(self, nc=3, zdim=2, imagesize=32, nclass=10, resnetl=10, dropout=0):
         super(ResNetClsH, self).__init__()
@@ -738,7 +740,6 @@ class ResNetClsH(nn.Module):
         if release:
             return z
         return hiddens, z
-
 
 
 class PretrainedResNet(nn.Module):
