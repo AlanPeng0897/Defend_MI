@@ -7,7 +7,7 @@ import torchvision.models
 import torch.nn.functional as F
 from torch.nn.modules.loss import _Loss
 import math, evolve, hsic
-from backbone import ResNetL_I
+from backbone import ResNetL_I, ResNetL_IH
 
 class VGG19(nn.Module):
     def __init__(self, n_classes=5):
@@ -685,6 +685,60 @@ class ResNetCls(nn.Module):
         z = self.z_to_logits(feature)
 
         return feature, z
+
+class ResNetClsH(nn.Module):
+    def __init__(self, nc=3, zdim=2, imagesize=32, nclass=10, resnetl=10, dropout=0):
+        super(ResNetClsH, self).__init__()
+        self.backbone = ResNetL_IH(resnetl, imagesize, nc)
+        self.fc1 = nn.Linear(self.backbone.final_feat_dim, zdim)
+        self.bn1 = nn.BatchNorm1d(self.backbone.final_feat_dim)
+        self.fc2 = nn.Linear(zdim, nclass)
+        self.bn2 = nn.BatchNorm1d(zdim)
+        if dropout > 0:
+            self.dropout1 = nn.Dropout(dropout)
+            self.dropout2 = nn.Dropout(dropout)
+            self.dropout = dropout
+
+    def embed_img(self, x, release=True):
+        x, hiddens = self.backbone(x)
+        x = F.relu(x)
+        if 'dropout' in dir(self) and self.dropout > 0:
+            x = self.dropout1(x)
+        x = self.bn1(x)
+        x = self.fc1(x)
+        hiddens.append(x)
+
+        if release:
+            return x
+        return x, hiddens
+
+    def embed(self, x):
+        return self.embed_img(x, release=False)
+
+    def z_to_logits(self, z):
+        z = F.relu(z)
+        if 'dropout' in dir(self) and self.dropout > 0:
+            z = self.dropout2(z)
+        feat = self.bn2(z)
+        z = self.fc2(feat)
+        return z, feat
+
+    def logits(self, x):
+        return self.z_to_logits(self.embed(x)[0])[0]
+
+    def z_to_lsm(self, z):
+        z, feat = self.z_to_logits(z)
+        return F.log_softmax(z, dim=1), feat
+
+    def forward(self, x, release=True):
+        feature, hiddens = self.embed_img(x, release=False)
+        z, feat = self.z_to_lsm(feature)
+        hiddens.append(feat)
+
+        if release:
+            return z
+        return hiddens, z
+
 
 
 class PretrainedResNet(nn.Module):
