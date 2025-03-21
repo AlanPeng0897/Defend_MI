@@ -69,7 +69,7 @@ def main(args, loaded_args, trainloader, testloader):
                 load_feature_extractor(net, checkpoint)
 
         elif model_name == "ResNet":
-            net = model.ResNetCls(nclass=n_classes, resnetl=10)
+            net = model.ResNetClsH(nclass=n_classes, resnetl=10)
             # net = model.ResNet18(n_classes=n_classes)
 
         elif model_name == "MCNN":
