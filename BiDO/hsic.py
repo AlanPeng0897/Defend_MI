@@ -108,7 +108,7 @@ def kernelmat(X, sigma, ktype='gaussian'):
         Dxx = distmat(X)
         Kx = 1 * torch.rsqrt(Dxx + 1)
 
-    Kxc = torch.mm(Kx, H)
+    Kxc = torch.mm(H, torch.mm(Kx, H))
 
     return Kxc
 
